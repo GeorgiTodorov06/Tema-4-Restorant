@@ -61,12 +61,11 @@ namespace Tema_4_Restorant.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,CustomerId,DataTime,TableId,Description")] Reservation reservation)
         {
-            if (ModelState.IsValid)
-            {
+
                 _context.Add(reservation);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
-            }
+
             ViewData["CustomerId"] = new SelectList(_context.Customer, "Id", "Id",reservation.CustomerId);
             ViewData["TableId"] = new SelectList(_context.Table, "Id", "Id", reservation.TableId);
             return View(reservation);
@@ -100,26 +99,10 @@ namespace Tema_4_Restorant.Controllers
             if (id != reservation.Id)
             {
                 return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
+            }       
                     _context.Update(reservation);
                     await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ReservationExists(reservation.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+             
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CustomerId"] = new SelectList(_context.Customer, "Id", "Id", reservation.CustomerId);
