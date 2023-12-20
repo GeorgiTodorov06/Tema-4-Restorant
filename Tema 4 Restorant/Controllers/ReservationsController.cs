@@ -50,7 +50,7 @@ namespace Tema_4_Restorant.Controllers
         public IActionResult Create()
         {
             ViewData["CustomerId"] = new SelectList(_context.Customer, "Id", "Id");
-            ViewData["TableId"] = new SelectList(_context.Table, "Id", "Id");
+            ViewData["TableId"] = new  SelectList(_context.Table, "Id", "Id");
             return View();
         }
        
@@ -61,10 +61,16 @@ namespace Tema_4_Restorant.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,CustomerId,DataTime,TableId,Description")] Reservation reservation)
         {
-
-                _context.Add(reservation);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+            foreach (var item in _context.Reservation)
+            {
+                if (item.TableId == reservation.TableId && item.DataTime.Hour + 1 >= reservation.DataTime.Hour && item.DataTime.Date == reservation.DataTime.Date)
+                {
+                    return NotFound();
+                }
+            }
+            _context.Add(reservation);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
 
             ViewData["CustomerId"] = new SelectList(_context.Customer, "Id", "Id",reservation.CustomerId);
             ViewData["TableId"] = new SelectList(_context.Table, "Id", "Id", reservation.TableId);
@@ -99,15 +105,19 @@ namespace Tema_4_Restorant.Controllers
             if (id != reservation.Id)
             {
                 return NotFound();
-            }       
-                    _context.Update(reservation);
-                    await _context.SaveChangesAsync();
-             
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customer, "Id", "Id", reservation.CustomerId);
-            ViewData["TableId"] = new SelectList(_context.Table, "Id", "Id", reservation.TableId);
-            return View(reservation);
+            else
+            {
+                _context.Update(reservation);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
+
+                ViewData["CustomerId"] = new SelectList(_context.Customer, "Id", "Id", reservation.CustomerId);
+                ViewData["TableId"] = new SelectList(_context.Table, "Id", "Id", reservation.TableId);
+                return View(reservation);
+            }
+                    
         }
 
         // GET: Reservations/Delete/5
