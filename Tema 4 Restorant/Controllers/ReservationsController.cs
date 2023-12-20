@@ -102,21 +102,21 @@ namespace Tema_4_Restorant.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,CustomerId,DataTime,TableId,Description")] Reservation reservation)
         {
-            if (id != reservation.Id)
+            foreach (var item in _context.Reservation)
             {
-                return NotFound();
+                if (item.TableId == reservation.TableId && item.DataTime.Hour + 1 >= reservation.DataTime.Hour && item.DataTime.Date == reservation.DataTime.Date)
+                {
+                    return NotFound();
+                }
             }
-            else
-            {
-                _context.Update(reservation);
-                await _context.SaveChangesAsync();
+            _context.Update(reservation);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
 
-                return RedirectToAction(nameof(Index));
-
-                ViewData["CustomerId"] = new SelectList(_context.Customer, "Id", "Id", reservation.CustomerId);
+            ViewData["CustomerId"] = new SelectList(_context.Customer, "Id", "Id", reservation.CustomerId);
                 ViewData["TableId"] = new SelectList(_context.Table, "Id", "Id", reservation.TableId);
                 return View(reservation);
-            }
+            
                     
         }
 
