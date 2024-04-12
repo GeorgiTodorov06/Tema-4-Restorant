@@ -63,7 +63,7 @@ namespace Tema_4_Restorant.Controllers
         {
             foreach (var item in _context.Reservation)
             {
-                if (item.TableId == reservation.TableId && item.DataTime.Hour + 1 >= reservation.DataTime.Hour && item.DataTime.Date == reservation.DataTime.Date)
+                if (item.TableId == reservation.TableId && item.DataTime.Hour + 1 >= reservation.DataTime.Hour && item.DataTime.Date == reservation.DataTime.Date && item.DataTime.Minute <= reservation.DataTime.Minute)
                 {
                     return NotFound();
                 }
@@ -104,7 +104,7 @@ namespace Tema_4_Restorant.Controllers
         {
             foreach (var item in _context.Reservation)
             {
-                if (item.TableId == reservation.TableId && item.DataTime.Hour + 1 >= reservation.DataTime.Hour && item.DataTime.Date == reservation.DataTime.Date)
+                if (item.TableId == reservation.TableId && item.DataTime.Hour + 1 >= reservation.DataTime.Hour && item.DataTime.Date == reservation.DataTime.Date && item.DataTime.Minute <= reservation.DataTime.Minute)
                 {
                     return NotFound();
                 }
